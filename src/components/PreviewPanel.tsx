@@ -93,7 +93,7 @@ export default function PreviewPanel({
             onScroll={onScroll}
             className="relative overflow-y-auto no-scrollbar bg-[#f2f2f7]/50 dark:bg-[#000000] flex flex-col z-20 flex-1 min-h-0 w-full overflow-x-hidden"
         >
-            <div className="flex-1 flex items-start justify-center py-12 px-4">
+            <div className="flex-1 flex items-start justify-center pt-0 pb-12 px-4">
                 <div className="preview-device-shell preview-device-mobile">
                     <div className="preview-device-screen">
                         <div
