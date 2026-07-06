@@ -264,7 +264,7 @@ export function applyTheme(html: string, themeId: string) {
         const currentStyle = img.getAttribute('style') || '';
         const appendedStyle = inGrid
             ? 'display:block; max-width:100%; height:auto; margin:0 !important; padding:8px !important; border-radius:14px !important; box-sizing:border-box; box-shadow:0 12px 28px rgba(15,23,42,0.18), 0 2px 8px rgba(15,23,42,0.12); border:1px solid rgba(255,255,255,0.75);'
-            : 'display:block; max-width:100%; max-height:475px; width:auto; height:auto; margin:30px auto !important; padding:8px !important; border-radius:14px !important; box-sizing:border-box; box-shadow:0 16px 34px rgba(15,23,42,0.22), 0 4px 10px rgba(15,23,42,0.12); border:1px solid rgba(15,23,42,0.12);';
+            : 'display:block; max-width:100%; max-height:450px; width:auto; height:auto; margin:30px auto !important; padding:8px !important; border-radius:14px !important; box-sizing:border-box; box-shadow:0 16px 34px rgba(15,23,42,0.22), 0 4px 10px rgba(15,23,42,0.12); border:1px solid rgba(15,23,42,0.12);';
         img.setAttribute('style', `${currentStyle}; ${appendedStyle}`);
     });
 
