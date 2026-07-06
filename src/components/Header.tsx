@@ -1,11 +1,9 @@
-import { Moon, Sun, Github } from 'lucide-react';
+import { Github } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ThemeSelector from './ThemeSelector';
 import Toolbar from './Toolbar';
 
 interface HeaderProps {
-    themeMode: 'light' | 'dark';
-    onToggleTheme: () => void;
     activeTheme: string;
     onThemeChange: (themeId: string) => void;
     onCopyHtml: () => void;
@@ -17,7 +15,7 @@ interface HeaderProps {
     isCopying: boolean;
 }
 
-export default function Header({ themeMode, onToggleTheme, activeTheme, onThemeChange, onCopyHtml, onCopy, onCopyMarkdown, copied, copiedHtml, copiedMarkdown, isCopying }: HeaderProps) {
+export default function Header({ activeTheme, onThemeChange, onCopyHtml, onCopy, onCopyMarkdown, copied, copiedHtml, copiedMarkdown, isCopying }: HeaderProps) {
     return (
         <header className="glass flex items-center gap-2 px-4 sm:px-6 py-2 sticky top-0 z-[100] flex-wrap">
             <div className="flex items-center gap-3 shrink-0">
@@ -53,14 +51,6 @@ export default function Header({ themeMode, onToggleTheme, activeTheme, onThemeC
                 >
                     <Github size={18} />
                 </motion.a>
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={onToggleTheme}
-                    className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-                >
-                    {themeMode === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-                </motion.button>
             </div>
         </header>
     );

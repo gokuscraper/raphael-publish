@@ -12,7 +12,6 @@ import EditorPanel from './components/EditorPanel';
 import PreviewPanel from './components/PreviewPanel';
 
 export default function App() {
-    const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light');
     const [markdownInput, setMarkdownInput] = useState<string>(defaultContent);
     const [renderedHtml, setRenderedHtml] = useState<string>('');
     const [activeTheme, setActiveTheme] = useState(THEMES[0].id);
@@ -25,19 +24,6 @@ export default function App() {
     const editorScrollRef = useRef<HTMLTextAreaElement>(null);
     const previewScrollRef = useRef<HTMLDivElement>(null);
     const scrollLockRef = useRef(false);
-
-    useEffect(() => {
-        // Enforce light mode as default, do not follow system preferences
-    }, []);
-
-    const toggleTheme = () => {
-        setThemeMode((prev) => {
-            const next = prev === 'light' ? 'dark' : 'light';
-            if (next === 'dark') document.documentElement.classList.add('dark');
-            else document.documentElement.classList.remove('dark');
-            return next;
-        });
-    };
 
     useEffect(() => {
         const rawHtml = md.render(preprocessMarkdown(markdownInput));
@@ -134,8 +120,6 @@ export default function App() {
         <div className="flex flex-col h-screen overflow-hidden antialiased bg-[#fbfbfd] dark:bg-black transition-colors duration-300">
 
             <Header
-                themeMode={themeMode}
-                onToggleTheme={toggleTheme}
                 activeTheme={activeTheme}
                 onThemeChange={setActiveTheme}
                 onCopyHtml={handleCopyHtml}
