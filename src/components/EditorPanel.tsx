@@ -7,10 +7,9 @@ interface EditorPanelProps {
     onInputChange: (value: string) => void;
     editorScrollRef: React.RefObject<HTMLTextAreaElement>;
     onEditorScroll: () => void;
-    scrollSyncEnabled: boolean;
 }
 
-export default function EditorPanel({ markdownInput, onInputChange, editorScrollRef, onEditorScroll, scrollSyncEnabled }: EditorPanelProps) {
+export default function EditorPanel({ markdownInput, onInputChange, editorScrollRef, onEditorScroll }: EditorPanelProps) {
     const onPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         handleSmartPaste(e, onInputChange);
     };
@@ -24,7 +23,7 @@ export default function EditorPanel({ markdownInput, onInputChange, editorScroll
                 value={markdownInput}
                 onChange={(e) => onInputChange(e.target.value)}
                 onPaste={onPaste}
-                onScroll={scrollSyncEnabled ? onEditorScroll : undefined}
+                onScroll={onEditorScroll}
                 placeholder="在这里输入 Markdown 内容..."
                 spellCheck={false}
             />
