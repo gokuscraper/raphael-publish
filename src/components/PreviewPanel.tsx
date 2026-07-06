@@ -93,14 +93,17 @@ export default function PreviewPanel({
             onScroll={onScroll}
             className="relative overflow-y-auto no-scrollbar bg-[#f2f2f7]/50 dark:bg-[#000000] flex flex-col z-20 flex-1 min-h-0 w-full overflow-x-hidden"
         >
-            <div className="mt-12 mb-32 mx-auto max-w-[660px] h-fit min-h-[calc(100%-48px)]">
-                <div className="bg-white rounded-[24px] overflow-hidden shadow-apple-lg transition-all duration-500 ring-1 ring-[#00000008] border-t border-white/50 w-full">
-                    <div
-                        ref={contentRef}
-                        data-testid="preview-content"
-                        dangerouslySetInnerHTML={{ __html: renderedHtml }}
-                        className="preview-content min-w-full"
-                    />
+            <div className="flex-1 flex items-start justify-center py-12 px-4">
+                <div className="preview-device-shell preview-device-mobile">
+                    <div className="preview-device-screen">
+                        <div
+                            ref={contentRef}
+                            data-testid="preview-content"
+                            dangerouslySetInnerHTML={{ __html: renderedHtml }}
+                            className="preview-content px-5 py-8"
+                        />
+                    </div>
+                    <div className="preview-device-home" />
                 </div>
             </div>
         </div>

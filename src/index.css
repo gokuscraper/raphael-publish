@@ -123,10 +123,9 @@
 
     .preview-device-mobile {
         width: 520px;
-        height: 1080px;
-        flex-shrink: 0;
         border-radius: 56px;
         padding: 12px;
+        flex-shrink: 0;
     }
 
     .preview-device-tablet {
