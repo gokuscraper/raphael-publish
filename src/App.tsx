@@ -11,6 +11,7 @@ import Header from './components/Header';
 import EditorPanel from './components/EditorPanel';
 import PreviewPanel from './components/PreviewPanel';
 import SyncDialog from './components/SyncDialog';
+import CoseSyncDialog from './components/CoseSyncDialog';
 
 export default function App() {
     const [markdownInput, setMarkdownInput] = useState<string>(defaultContent);
@@ -22,6 +23,7 @@ export default function App() {
     const [copiedMarkdown, setCopiedMarkdown] = useState(false);
     const [activePanel, setActivePanel] = useState<'editor' | 'preview'>('editor');
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
+    const [coseSyncDialogOpen, setCoseSyncDialogOpen] = useState(false);
     const previewRef = useRef<HTMLDivElement>(null);
     const editorScrollRef = useRef<HTMLTextAreaElement>(null);
     const previewScrollRef = useRef<HTMLDivElement>(null);
@@ -133,6 +135,7 @@ export default function App() {
                 onCopy={handleCopy}
                 onCopyMarkdown={handleCopyMarkdown}
                 onSync={() => setSyncDialogOpen(true)}
+                onSyncCose={() => setCoseSyncDialogOpen(true)}
                 copied={copied}
                 copiedHtml={copiedHtml}
                 copiedMarkdown={copiedMarkdown}
@@ -185,6 +188,14 @@ export default function App() {
                 onClose={() => setSyncDialogOpen(false)}
                 title={extractTitle(markdownInput)}
                 htmlContent={renderedHtml}
+            />
+
+            <CoseSyncDialog
+                isOpen={coseSyncDialogOpen}
+                onClose={() => setCoseSyncDialogOpen(false)}
+                title={extractTitle(markdownInput)}
+                htmlContent={renderedHtml}
+                markdownContent={markdownInput}
             />
         </div>
     );

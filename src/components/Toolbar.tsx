@@ -1,4 +1,4 @@
-import { Copy, CheckCircle2, Code, Loader2, Send } from 'lucide-react';
+import { Copy, CheckCircle2, Code, Loader2, Send, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ToolbarProps {
@@ -6,13 +6,14 @@ interface ToolbarProps {
     onCopy: () => void;
     onCopyMarkdown: () => void;
     onSync: () => void;
+    onSyncCose: () => void;
     copied: boolean;
     copiedHtml: boolean;
     copiedMarkdown: boolean;
     isCopying: boolean;
 }
 
-export default function Toolbar({ onCopyHtml, onCopy, onCopyMarkdown, onSync, copied, copiedHtml, copiedMarkdown, isCopying }: ToolbarProps) {
+export default function Toolbar({ onCopyHtml, onCopy, onCopyMarkdown, onSync, onSyncCose, copied, copiedHtml, copiedMarkdown, isCopying }: ToolbarProps) {
     return (
         <div className="flex items-center gap-1 sm:gap-2">
             <motion.button
@@ -22,7 +23,17 @@ export default function Toolbar({ onCopyHtml, onCopy, onCopyMarkdown, onSync, co
                 className="apple-export-btn !hidden lg:!flex border-transparent !bg-[#00000008] dark:!bg-[#ffffff10]"
             >
                 <Send size={14} />
-                同步到…
+                主同步
+            </motion.button>
+
+            <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={onSyncCose}
+                className="apple-export-btn !hidden lg:!flex border-transparent !bg-[#00000008] dark:!bg-[#ffffff10]"
+            >
+                <Globe size={14} />
+                副同步
             </motion.button>
 
             <motion.button
