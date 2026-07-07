@@ -1,17 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { X, Loader2, CheckCircle2, AlertCircle, ExternalLink, Send, AlertTriangle } from 'lucide-react';
-
-interface Account {
-    type: string;
-    title: string;
-    displayName: string;
-    icon: string;
-    avatar: string;
-    uid: string;
-    home: string;
-    supportTypes: string[];
-}
+import { X, Loader2, CheckCircle2, AlertCircle, ExternalLink, Send, AlertTriangle, LogIn } from 'lucide-react';
+import { ALL_PLATFORMS, type PlatformMeta } from '../lib/platforms';
 
 interface AccountStatus {
     type: string;
@@ -30,11 +20,16 @@ interface SyncDialogProps {
     htmlContent: string;
 }
 
+interface PlatformItem extends PlatformMeta {
+    isAuthenticated: boolean;
+    username?: string;
+}
+
 type Step = 'loading' | 'select' | 'syncing' | 'done';
 
 export default function SyncDialog({ isOpen, onClose, title, htmlContent }: SyncDialogProps) {
     const [step, setStep] = useState<Step>('loading');
-    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [platforms, setPlatforms] = useState<PlatformItem[]>([]);
     const [selected, setSelected] = useState<Set<string>>(new Set());
     const [progress, setProgress] = useState<AccountStatus[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -50,20 +45,28 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
         const poster = (window as any).$poster;
         if (!poster) {
             setExtensionInstalled(false);
+            setPlatforms(ALL_PLATFORMS.map((p) => ({ ...p, isAuthenticated: false })));
             setStep('select');
             return;
         }
         setExtensionInstalled(true);
 
-        poster.getAccounts((result: Account[]) => {
-            if (!Array.isArray(result)) {
-                setError('获取平台列表失败');
-                setStep('select');
-                return;
-            }
-            const valid = result.filter((a) => a.type !== 'weixin' && a.supportTypes?.includes('html'));
-            setAccounts(valid);
-            setSelected(new Set(valid.map((a) => a.type)));
+        poster.getAccounts((result: AccountStatus[]) => {
+            const authed = new Set(
+                Array.isArray(result) ? result.map((a: AccountStatus) => a.type) : []
+            );
+            const merged: PlatformItem[] = ALL_PLATFORMS.map((p) => {
+                const account = Array.isArray(result)
+                    ? result.find((a: AccountStatus) => a.type === p.type)
+                    : undefined;
+                return {
+                    ...p,
+                    isAuthenticated: authed.has(p.type),
+                    username: account?.title,
+                };
+            });
+            setPlatforms(merged);
+            setSelected(new Set(merged.filter((p) => p.isAuthenticated).map((p) => p.type)));
             setStep('select');
         });
     }, [isOpen]);
@@ -78,38 +81,52 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
     };
 
     const toggleAll = () => {
-        if (selected.size === accounts.length) {
+        const authed = platforms.filter((p) => p.isAuthenticated);
+        if (authed.every((p) => selected.has(p.type))) {
             setSelected(new Set());
         } else {
-            setSelected(new Set(accounts.map((a) => a.type)));
+            setSelected(new Set(authed.map((p) => p.type)));
         }
+    };
+
+    const openLogin = (homepage: string) => {
+        window.open(homepage, '_blank');
     };
 
     const startSync = useCallback(() => {
         const poster = (window as any).$poster;
         if (!poster) return;
 
-        const targetAccounts = accounts.filter((a) => selected.has(a.type));
-        if (targetAccounts.length === 0) return;
+        const targetPlatforms = platforms.filter((p) => selected.has(p.type) && p.isAuthenticated);
+        if (targetPlatforms.length === 0) return;
+
+        const accounts = targetPlatforms.map((p) => ({
+            type: p.type,
+            title: p.username || p.name,
+            displayName: p.name,
+            icon: p.icon,
+            avatar: p.icon,
+            uid: p.username || '',
+            home: p.homepage,
+            supportTypes: ['html'],
+        }));
 
         setStep('syncing');
-        setProgress(targetAccounts.map((a) => ({ type: a.type, title: a.title, status: 'pending' })));
+        setProgress(accounts.map((a) => ({ type: a.type, title: a.title, status: 'pending' })));
 
         poster.addTask(
             {
                 post: { title, content: htmlContent },
-                accounts: targetAccounts,
+                accounts,
             },
             (update: { accounts: AccountStatus[] }) => {
                 setProgress(update.accounts);
                 const allDone = update.accounts.every((a) => a.status === 'done' || a.status === 'failed');
                 if (allDone) setStep('done');
             },
-            (err: any) => {
-                if (err) setError(typeof err === 'string' ? err : '同步失败');
-            }
+            () => {}
         );
-    }, [accounts, selected, title, htmlContent]);
+    }, [platforms, selected, title, htmlContent]);
 
     const getStatusIcon = (status: string) => {
         switch (status) {
@@ -126,7 +143,9 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
 
     if (!isOpen) return null;
 
-    const allSelected = selected.size === accounts.length;
+    const authenticatedCount = platforms.filter((p) => p.isAuthenticated).length;
+    const authedSelectedCount = platforms.filter((p) => selected.has(p.type) && p.isAuthenticated).length;
+    const allAuthedSelected = platforms.filter((p) => p.isAuthenticated).every((p) => selected.has(p.type));
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
@@ -152,14 +171,6 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
                         </div>
                     )}
 
-                    {extensionInstalled && accounts.length === 0 && step === 'select' && !error && (
-                        <div className="flex flex-col items-center gap-3 py-8 text-center">
-                            <AlertTriangle size={32} className="text-[#ff9f0a]" />
-                            <p className="text-[15px] text-[#1d1d1f] dark:text-[#f5f5f7] font-medium">未登录任何平台</p>
-                            <p className="text-[13px] text-[#86868b]">请先点击扩展图标，登录要同步的目标平台</p>
-                        </div>
-                    )}
-
                     {error && (
                         <div className="flex items-center gap-2 p-3 mb-3 rounded-xl bg-[#ff3b30]/10 text-[#ff3b30] text-[13px]">
                             <AlertCircle size={14} />
@@ -173,35 +184,61 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
                         </div>
                     )}
 
-                    {step === 'select' && accounts.length > 0 && (
+                    {step === 'select' && extensionInstalled !== false && (
                         <>
                             <div className="flex items-center justify-between mb-3 px-1">
-                                <span className="text-[13px] text-[#86868b]">已登录 {accounts.length} 个平台</span>
-                                <button onClick={toggleAll} className="text-[13px] text-[#0066cc] dark:text-[#0a84ff] font-medium">
-                                    {allSelected ? '取消全选' : '全选'}
-                                </button>
+                                <span className="text-[13px] text-[#86868b]">已登录 {authenticatedCount}/{platforms.length} 个平台</span>
+                                {authenticatedCount > 0 && (
+                                    <button onClick={toggleAll} className="text-[13px] text-[#0066cc] dark:text-[#0a84ff] font-medium">
+                                        {allAuthedSelected ? '取消全选' : '全选'}
+                                    </button>
+                                )}
                             </div>
                             <div className="space-y-1">
-                                {accounts.map((acc) => (
-                                    <label
-                                        key={acc.type}
-                                        className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${
-                                            selected.has(acc.type) ? 'bg-[#0066cc]/8 dark:bg-[#0a84ff]/15' : 'hover:bg-black/5 dark:hover:bg-white/5'
-                                        }`}
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={selected.has(acc.type)}
-                                            onChange={() => togglePlatform(acc.type)}
-                                            className="w-4 h-4 rounded accent-[#0066cc] dark:accent-[#0a84ff]"
-                                        />
-                                        <img src={acc.avatar || acc.icon} alt="" className="w-6 h-6 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
-                                        <div className="flex-1 min-w-0">
-                                            <div className="text-[14px] font-medium text-[#1d1d1f] dark:text-[#f5f5f7] truncate">{acc.displayName}</div>
-                                            <div className="text-[12px] text-[#86868b] truncate">@{acc.title || acc.uid}</div>
+                                {platforms.map((p) => {
+                                    const isAuthed = p.isAuthenticated;
+                                    const isSelected = selected.has(p.type);
+                                    return (
+                                        <div
+                                            key={p.type}
+                                            onClick={() => isAuthed ? togglePlatform(p.type) : openLogin(p.homepage)}
+                                            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${
+                                                isAuthed && isSelected
+                                                    ? 'bg-[#0066cc]/8 dark:bg-[#0a84ff]/15'
+                                                    : 'hover:bg-black/5 dark:hover:bg-white/5'
+                                            } ${!isAuthed ? 'opacity-50' : ''}`}
+                                        >
+                                            {isAuthed ? (
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isSelected}
+                                                    onChange={() => togglePlatform(p.type)}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="w-4 h-4 rounded accent-[#0066cc] dark:accent-[#0a84ff] shrink-0"
+                                                />
+                                            ) : (
+                                                <div className="w-4 h-4 shrink-0 flex items-center justify-center">
+                                                    <LogIn size={12} className="text-[#86868b]" />
+                                                </div>
+                                            )}
+                                            <img
+                                                src={p.icon}
+                                                alt=""
+                                                className="w-6 h-6 rounded-full shrink-0"
+                                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                                            />
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-[14px] font-medium text-[#1d1d1f] dark:text-[#f5f5f7] truncate">{p.name}</div>
+                                                <div className="text-[12px] text-[#86868b] truncate">
+                                                    {isAuthed ? (p.username ? `@${p.username}` : '已登录') : '未登录，点击去登录'}
+                                                </div>
+                                            </div>
+                                            {!isAuthed && (
+                                                <span className="text-[12px] text-[#0066cc] dark:text-[#0a84ff] font-medium shrink-0">去登录</span>
+                                            )}
                                         </div>
-                                    </label>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </>
                     )}
@@ -228,6 +265,7 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 shrink-0"
+                                            onClick={(e) => e.stopPropagation()}
                                         >
                                             <ExternalLink size={14} className="text-[#0066cc] dark:text-[#0a84ff]" />
                                         </a>
@@ -242,14 +280,14 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
                     <button onClick={onClose} className="px-4 py-2 rounded-full text-[14px] font-medium text-[#86868b] hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
                         {step === 'done' ? '关闭' : '取消'}
                     </button>
-                    {step === 'select' && (
+                    {step === 'select' && authenticatedCount > 0 && (
                         <button
                             onClick={startSync}
-                            disabled={selected.size === 0}
+                            disabled={authedSelectedCount === 0}
                             className="flex items-center gap-2 px-5 py-2 rounded-full text-[14px] font-medium bg-[#0066cc] hover:bg-[#0071e3] text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                         >
                             <Send size={14} />
-                            同步到 {selected.size} 个平台
+                            同步到 {authedSelectedCount} 个平台
                         </button>
                     )}
                 </div>
