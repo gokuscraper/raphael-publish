@@ -66,7 +66,7 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
                 };
             });
             setPlatforms(merged);
-            setSelected(new Set(merged.filter((p) => p.isAuthenticated).map((p) => p.type)));
+            setSelected(new Set(merged.filter((p) => p.isAuthenticated && !p.disabled).map((p) => p.type)));
             setStep('select');
         });
     }, [isOpen]);
@@ -81,7 +81,7 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
     };
 
     const toggleAll = () => {
-        const authed = platforms.filter((p) => p.isAuthenticated);
+        const authed = platforms.filter((p) => p.isAuthenticated && !p.disabled);
         if (authed.every((p) => selected.has(p.type))) {
             setSelected(new Set());
         } else {
@@ -97,7 +97,7 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
         const poster = (window as any).$poster;
         if (!poster) return;
 
-        const targetPlatforms = platforms.filter((p) => selected.has(p.type) && p.isAuthenticated);
+        const targetPlatforms = platforms.filter((p) => selected.has(p.type) && p.isAuthenticated && !p.disabled);
         if (targetPlatforms.length === 0) return;
 
         const accounts = targetPlatforms.map((p) => ({
@@ -143,9 +143,9 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
 
     if (!isOpen) return null;
 
-    const authenticatedCount = platforms.filter((p) => p.isAuthenticated).length;
-    const authedSelectedCount = platforms.filter((p) => selected.has(p.type) && p.isAuthenticated).length;
-    const allAuthedSelected = platforms.filter((p) => p.isAuthenticated).every((p) => selected.has(p.type));
+    const authenticatedCount = platforms.filter((p) => p.isAuthenticated && !p.disabled).length;
+    const authedSelectedCount = platforms.filter((p) => selected.has(p.type) && p.isAuthenticated && !p.disabled).length;
+    const allAuthedSelected = platforms.filter((p) => p.isAuthenticated && !p.disabled).every((p) => selected.has(p.type));
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
@@ -196,16 +196,19 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
                             </div>
                             <div className="space-y-1">
                                 {platforms.map((p) => {
-                                    const isAuthed = p.isAuthenticated;
+                                    const isAuthed = p.isAuthenticated && !p.disabled;
                                     const isSelected = selected.has(p.type);
+                                    const isDisabled = p.disabled;
                                     return (
                                         <div
                                             key={p.type}
-                                            onClick={() => isAuthed ? togglePlatform(p.type) : openLogin(p.homepage)}
-                                            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${
+                                            onClick={() => { if (isDisabled) return; isAuthed ? togglePlatform(p.type) : openLogin(p.homepage) }}
+                                            className={`flex items-center gap-3 p-3 rounded-xl transition-colors ${
+                                                isDisabled ? 'cursor-default' : 'cursor-pointer'
+                                            } ${
                                                 isAuthed && isSelected
                                                     ? 'bg-[#0066cc]/8 dark:bg-[#0a84ff]/15'
-                                                    : 'hover:bg-black/5 dark:hover:bg-white/5'
+                                                    : isAuthed ? 'hover:bg-black/5 dark:hover:bg-white/5' : ''
                                             } ${!isAuthed ? 'opacity-50' : ''}`}
                                         >
                                             {isAuthed ? (
@@ -218,7 +221,7 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
                                                 />
                                             ) : (
                                                 <div className="w-4 h-4 shrink-0 flex items-center justify-center">
-                                                    <LogIn size={12} className="text-[#86868b]" />
+                                                    {isDisabled ? <div className="w-4 h-4" /> : <LogIn size={12} className="text-[#86868b]" />}
                                                 </div>
                                             )}
                                             <img
@@ -230,10 +233,10 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
                                             <div className="flex-1 min-w-0">
                                                 <div className="text-[14px] font-medium text-[#1d1d1f] dark:text-[#f5f5f7] truncate">{p.name}</div>
                                                 <div className="text-[12px] text-[#86868b] truncate">
-                                                    {isAuthed ? (p.username ? `@${p.username}` : '已登录') : '未登录，点击去登录'}
+                                                    {isDisabled ? '暂不支持' : isAuthed ? (p.username ? `@${p.username}` : '已登录') : '未登录，点击去登录'}
                                                 </div>
                                             </div>
-                                            {!isAuthed && (
+                                            {!isAuthed && !isDisabled && (
                                                 <span className="text-[12px] text-[#0066cc] dark:text-[#0a84ff] font-medium shrink-0">去登录</span>
                                             )}
                                         </div>
