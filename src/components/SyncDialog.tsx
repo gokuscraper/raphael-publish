@@ -55,8 +55,8 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
         }
         setExtensionInstalled(true);
 
-        poster.getAccounts((err: any, result: Account[]) => {
-            if (err) {
+        poster.getAccounts((result: Account[]) => {
+            if (!Array.isArray(result)) {
                 setError('获取平台列表失败');
                 setStep('select');
                 return;
