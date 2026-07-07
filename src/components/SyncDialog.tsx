@@ -217,7 +217,7 @@ export default function SyncDialog({ isOpen, onClose, title, htmlContent }: Sync
                                         <div className="text-[14px] font-medium text-[#1d1d1f] dark:text-[#f5f5f7] truncate">{p.displayName || p.title}</div>
                                         <div className="text-[12px] text-[#86868b] truncate">
                                             {p.status === 'pending' && '等待中'}
-                                            {p.status === 'uploading' && '正在上传...'}
+                                            {p.status === 'uploading' && (p.msg || '正在上传...')}
                                             {p.status === 'done' && '同步成功'}
                                             {p.status === 'failed' && (p.error || '同步失败')}
                                         </div>
