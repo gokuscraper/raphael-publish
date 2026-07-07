@@ -32,7 +32,7 @@ export const ALL_PLATFORMS: PlatformMeta[] = [
     { type: 'yidian', name: '一点号', icon: 'https://www.yidianzixun.com/favicon.ico', homepage: 'https://www.yidianzixun.com', disabled: true },
     { type: 'sohufocus', name: '搜狐焦点', icon: 'https://m.focus.cn/favicon.ico', homepage: 'https://m.focus.cn', disabled: true },
     { type: 'smzdm', name: '什么值得买', icon: 'https://www.smzdm.com/favicon.ico', homepage: 'https://www.smzdm.com', disabled: true },
-    { type: 'netease', name: '网易号', icon: 'https://mp.163.com/favicon.ico', homepage: 'https://mp.163.com' },
+    { type: 'netease', name: '网易号', icon: 'https://mp.163.com/favicon.ico', homepage: 'https://mp.163.com', disabled: true },
     { type: 'x', name: 'Twitter/X', icon: 'https://abs.twimg.com/favicons/twitter.ico', homepage: 'https://x.com', disabled: true },
     { type: 'wordpress', name: 'WordPress', icon: 'https://s.w.org/images/favicon.ico', homepage: '', disabled: true },
     { type: 'typecho', name: 'Typecho', icon: '', homepage: '', disabled: true },
