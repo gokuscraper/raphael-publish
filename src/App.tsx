@@ -10,6 +10,7 @@ import { findElementPosition, type ElementLocation } from './lib/markdownLocator
 import Header from './components/Header';
 import EditorPanel from './components/EditorPanel';
 import PreviewPanel from './components/PreviewPanel';
+import SyncDialog from './components/SyncDialog';
 
 export default function App() {
     const [markdownInput, setMarkdownInput] = useState<string>(defaultContent);
@@ -20,6 +21,7 @@ export default function App() {
     const [copiedHtml, setCopiedHtml] = useState(false);
     const [copiedMarkdown, setCopiedMarkdown] = useState(false);
     const [activePanel, setActivePanel] = useState<'editor' | 'preview'>('editor');
+    const [syncDialogOpen, setSyncDialogOpen] = useState(false);
     const previewRef = useRef<HTMLDivElement>(null);
     const editorScrollRef = useRef<HTMLTextAreaElement>(null);
     const previewScrollRef = useRef<HTMLDivElement>(null);
@@ -90,6 +92,11 @@ export default function App() {
         syncScroll(previewScrollRef.current, editorScrollRef.current);
     };
 
+    const extractTitle = (md: string): string => {
+        const match = md.match(/^#\s+(.+)/m);
+        return match ? match[1].trim() : '未命名文章';
+    };
+
     const handleImageClick = useCallback((info: { type: string; index: number; src?: string; alt?: string; content?: string }) => {
         if (!editorScrollRef.current) return;
 
@@ -125,6 +132,7 @@ export default function App() {
                 onCopyHtml={handleCopyHtml}
                 onCopy={handleCopy}
                 onCopyMarkdown={handleCopyMarkdown}
+                onSync={() => setSyncDialogOpen(true)}
                 copied={copied}
                 copiedHtml={copiedHtml}
                 copiedMarkdown={copiedMarkdown}
@@ -172,6 +180,12 @@ export default function App() {
                 </div>
             </main>
 
+            <SyncDialog
+                isOpen={syncDialogOpen}
+                onClose={() => setSyncDialogOpen(false)}
+                title={extractTitle(markdownInput)}
+                htmlContent={renderedHtml}
+            />
         </div>
     );
 }

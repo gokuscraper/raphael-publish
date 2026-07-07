@@ -9,13 +9,14 @@ interface HeaderProps {
     onCopyHtml: () => void;
     onCopy: () => void;
     onCopyMarkdown: () => void;
+    onSync: () => void;
     copied: boolean;
     copiedHtml: boolean;
     copiedMarkdown: boolean;
     isCopying: boolean;
 }
 
-export default function Header({ activeTheme, onThemeChange, onCopyHtml, onCopy, onCopyMarkdown, copied, copiedHtml, copiedMarkdown, isCopying }: HeaderProps) {
+export default function Header({ activeTheme, onThemeChange, onCopyHtml, onCopy, onCopyMarkdown, onSync, copied, copiedHtml, copiedMarkdown, isCopying }: HeaderProps) {
     return (
         <header className="glass flex items-center gap-2 px-4 sm:px-6 py-2 sticky top-0 z-[100] flex-wrap">
             <div className="flex items-center gap-3 shrink-0">
@@ -30,6 +31,7 @@ export default function Header({ activeTheme, onThemeChange, onCopyHtml, onCopy,
                     onCopyHtml={onCopyHtml}
                     onCopy={onCopy}
                     onCopyMarkdown={onCopyMarkdown}
+                    onSync={onSync}
                     copied={copied}
                     copiedHtml={copiedHtml}
                     copiedMarkdown={copiedMarkdown}
