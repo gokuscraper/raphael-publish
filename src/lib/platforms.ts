@@ -7,6 +7,8 @@ export interface PlatformMeta {
 }
 
 export const ALL_PLATFORMS: PlatformMeta[] = [
+    { type: 'douyin', name: '抖音图文', icon: 'https://www.douyin.com/favicon.ico', homepage: 'https://www.douyin.com' },
+    { type: 'xiaohongshu', name: '小红书', icon: 'https://www.xiaohongshu.com/favicon.ico', homepage: 'https://www.xiaohongshu.com' },
     { type: 'zhihu', name: '知乎', icon: 'https://static.zhihu.com/static/favicon.ico', homepage: 'https://www.zhihu.com' },
     { type: 'juejin', name: '掘金', icon: 'https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/static/favicons/favicon-32x32.png', homepage: 'https://juejin.cn' },
     { type: 'csdn', name: 'CSDN', icon: 'https://g.csdnimg.cn/static/logo/favicon32.ico', homepage: 'https://editor.csdn.net/md/' },
@@ -14,7 +16,6 @@ export const ALL_PLATFORMS: PlatformMeta[] = [
     { type: 'toutiao', name: '头条号', icon: 'https://mp.toutiao.com/favicon.ico', homepage: 'https://mp.toutiao.com' },
     { type: 'weibo', name: '微博', icon: 'https://weibo.com/favicon.ico', homepage: 'https://card.weibo.com/article/v5/editor' },
     { type: 'bilibili', name: '哔哩哔哩', icon: 'https://www.bilibili.com/favicon.ico', homepage: 'https://member.bilibili.com/platform/upload/text' },
-    { type: 'xiaohongshu', name: '小红书', icon: 'https://www.xiaohongshu.com/favicon.ico', homepage: 'https://www.xiaohongshu.com' },
     { type: 'baijiahao', name: '百家号', icon: 'https://baijiahao.baidu.com/favicon.ico', homepage: 'https://baijiahao.baidu.com/' },
     { type: 'yuque', name: '语雀', icon: 'https://gw.alipayobjects.com/zos/rmsportal/UTjFYEzMSYVwzxIGVhMu.png', homepage: 'https://www.yuque.com/dashboard', disabled: true },
     { type: 'douban', name: '豆瓣', icon: 'https://www.douban.com/favicon.ico', homepage: 'https://www.douban.com/note/create', disabled: true },
@@ -27,7 +28,6 @@ export const ALL_PLATFORMS: PlatformMeta[] = [
     { type: 'segmentfault', name: '思否', icon: 'https://static.segmentfault.com/v-5e501fa4/favicon.ico', homepage: 'https://segmentfault.com' },
     { type: 'cnblogs', name: '博客园', icon: 'https://www.cnblogs.com/favicon.ico', homepage: 'https://www.cnblogs.com' },
     { type: 'eastmoney', name: '东方财富', icon: 'https://mp.eastmoney.com/favicon.ico', homepage: 'https://mp.eastmoney.com', disabled: true },
-    { type: 'douyin', name: '抖音图文', icon: 'https://www.douyin.com/favicon.ico', homepage: 'https://www.douyin.com' },
     { type: 'dayu', name: '大鱼号', icon: 'https://mp.dayu.com/favicon.ico', homepage: 'https://mp.dayu.com', disabled: true },
     { type: 'yidian', name: '一点号', icon: 'https://www.yidianzixun.com/favicon.ico', homepage: 'https://www.yidianzixun.com', disabled: true },
     { type: 'sohufocus', name: '搜狐焦点', icon: 'https://m.focus.cn/favicon.ico', homepage: 'https://m.focus.cn', disabled: true },
