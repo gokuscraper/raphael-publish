@@ -21,7 +21,7 @@ export const ALL_PLATFORMS: PlatformMeta[] = [
     { type: 'douban', name: '豆瓣', icon: 'https://www.douban.com/favicon.ico', homepage: 'https://www.douban.com/note/create', disabled: true },
     { type: 'sohu', name: '搜狐号', icon: 'https://mp.sohu.com/favicon.ico', homepage: 'https://mp.sohu.com' },
     { type: 'xueqiu', name: '雪球', icon: 'https://xueqiu.com/favicon.ico', homepage: 'https://xueqiu.com', disabled: true },
-    { type: 'woshipm', name: '人人都是产品经理', icon: 'https://www.woshipm.com/favicon.ico', homepage: 'https://www.woshipm.com' },
+    { type: 'woshipm', name: '人人都是产品经理', icon: 'https://www.woshipm.com/favicon.ico', homepage: 'https://www.woshipm.com', disabled: true },
     { type: '51cto', name: '51CTO', icon: 'https://www.51cto.com/favicon.ico', homepage: 'https://blog.51cto.com' },
     { type: 'imooc', name: '慕课手记', icon: 'https://www.imooc.com/favicon.ico', homepage: 'https://www.imooc.com/article' },
     { type: 'oschina', name: '开源中国', icon: 'https://www.oschina.net/favicon.ico', homepage: 'https://my.oschina.net' },
