@@ -7,8 +7,8 @@ export interface PlatformMeta {
 }
 
 export const ALL_PLATFORMS: PlatformMeta[] = [
-    { type: 'douyin', name: '抖音图文', icon: 'https://www.douyin.com/favicon.ico', homepage: 'https://www.douyin.com' },
-    { type: 'xiaohongshu', name: '小红书', icon: 'https://www.xiaohongshu.com/favicon.ico', homepage: 'https://www.xiaohongshu.com' },
+    { type: 'douyin', name: '抖音图文', icon: 'https://www.douyin.com/favicon.ico', homepage: 'https://www.douyin.com', disabled: true },
+    { type: 'xiaohongshu', name: '小红书', icon: 'https://www.xiaohongshu.com/favicon.ico', homepage: 'https://www.xiaohongshu.com', disabled: true },
     { type: 'zhihu', name: '知乎', icon: 'https://static.zhihu.com/static/favicon.ico', homepage: 'https://www.zhihu.com' },
     { type: 'juejin', name: '掘金', icon: 'https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/static/favicons/favicon-32x32.png', homepage: 'https://juejin.cn' },
     { type: 'csdn', name: 'CSDN', icon: 'https://g.csdnimg.cn/static/logo/favicon32.ico', homepage: 'https://editor.csdn.net/md/' },
