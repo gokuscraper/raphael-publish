@@ -39,6 +39,13 @@ export function preprocessMarkdown(content: string) {
         /([^\s])\*\*([+\-＋－%％~～!！?？,，.。:：;；、\\/|@#￥$^&*_=（）()【】\[\]《》〈〉「」『』“”"'`…·][^\n*]*?)\*\*/g,
         '$1**\u200B$2**'
     );
+    // markdown-it may fail to close bold when the content ends with punctuation/symbol
+    // and `**` is directly followed by a non-space non-punctuation char (e.g. `。**首页`).
+    // Insert a zero-width separator before the closing `**` for these cases.
+    content = content.replace(
+        /(\*\*[^*\n]*[\p{P}\p{S}])\*\*(?=[^\s\p{P}\p{S}])/gu,
+        '$1\u200B**'
+    );
     return content;
 }
 

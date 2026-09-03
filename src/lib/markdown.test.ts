@@ -21,6 +21,25 @@ describe('preprocessMarkdown', () => {
         expect(strong?.textContent?.replace(/\u200B/g, '')).toBe('-5%');
     });
 
+    it('closes bold when the content ends with punctuation followed directly by CJK text', () => {
+        const html = renderMarkdown('**第三块：导航页流量变现。**首页搜索框下方能看到入口。');
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const strong = doc.querySelector('strong');
+
+        expect(strong).not.toBeNull();
+        expect(strong?.textContent?.replace(/\u200B/g, '')).toBe('第三块：导航页流量变现。');
+        expect(html).not.toContain('**第三块');
+    });
+
+    it('does not inject separator when bold is followed by a space', () => {
+        const html = renderMarkdown('**第二块：搜索引擎分成。** 用户在 Alook 里搜索时');
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const strong = doc.querySelector('strong');
+
+        expect(strong).not.toBeNull();
+        expect(strong?.textContent?.replace(/\u200B/g, '')).toBe('第二块：搜索引擎分成。');
+    });
+
     it('does not merge separate bold blocks across blank lines', () => {
         const html = renderMarkdown('**5 %**\n\n**5%**');
         const doc = new DOMParser().parseFromString(html, 'text/html');
